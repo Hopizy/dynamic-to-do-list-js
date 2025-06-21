@@ -1,55 +1,45 @@
-// Wait for the DOM to fully load
-document.addEventListener('DOMContentLoaded', function () {
-  // Select DOM elements
-  const addButton = document.getElementById('add-button');
-  const taskInput = document.getElementById('task-input');
-  const taskList = document.getElementById('task-list');
+<script>
+    function addItem(){
+        //get current number of todo Items (for creating the ID)
+        const currentNumberOfItems = document.querySelectorAll('.item').length
+        console.log(currentNumberOfItems)
+        console.log('Research:', document.querySelectorAll('.item'))
 
-  // Function to add a task
-  function addTask() {
-    // Get and trim the input value
-    const taskText = taskInput.value.trim();
+        const item = document.getElementById('todoInput').value //pulling value from input box
+        const text = document.createTextNode(item) //turning input text into node
+        const newItem = document.createElement('li') //creates a list
+        newItem.id = currentNumberOfItems //give the new <li> an auto-incrementing id property
+        newItem.classList.add('item') //add the item class so we can search for it by class
+        //we didn't end up searching by class, but you can find every <li> on the page
+        //using console.log(document.querySelectorAll('.item'))
+        newItem.appendChild(text) //appends task entered from input
+        document.getElementById('todoList').appendChild(newItem) //appends the entered task to the list
 
-    // Alert if task is empty
-    if (taskText === '') {
-      alert('Please enter a task.');
-      return;
+        const btn = document.createElement('button') // Create a <button> element
+        const t = document.createTextNode('Delete')  // Create a text node
+        btn.appendChild(t)                           // Append the text to <button>
+        newItem.appendChild(btn)                     // Append <button> into the new <li>
+
+        //we are going to create an event listener on the button
+        //this takes 2 parameters
+        //first = event type (on click)
+        //second = callback function to run when the event is detected
+        btn.addEventListener('click', function(event) {
+            console.log(event.target.parentNode) //we want the element in which the button exists
+            console.log('Research:', event) //look at all the stuff in here!
+            deleteItem(event.target.parentNode) //run our delete function
+        })
     }
 
-    // Create a new list item
-    const listItem = document.createElement('li');
-    listItem.textContent = taskText;
+    //now that we have an event listener and know the parent
+    //we just have to find a way to delete the parent
+    //we can call the input anything, and it will be a DOM element (event.target.parentNode)
+    function deleteItem(parent) {
+        console.log(parent.id) //lets check the parent's id
 
-    // Create a remove button
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'Remove';
-    removeButton.className = 'remove-btn';
-
-    // Remove task when button is clicked
-    removeButton.onclick = function () {
-      taskList.removeChild(listItem);
-    };
-
-    // Append remove button to list item
-    listItem.appendChild(removeButton);
-
-    // Append list item to the task list
-    taskList.appendChild(listItem);
-
-    // Clear the input field
-    taskInput.value = '';
-  }
-
-  // Add task on button click
-  addButton.addEventListener('click', addTask);
-
-  // Add task on pressing Enter key
-  taskInput.addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-      addTask();
+        //we can use element.removeChild() to ditch the todo item
+        //first, we have to get the <ul> somehow
+        const todoList = document.getElementById('todoList') //let's get the <ul> by ID
+        todoList.removeChild(parent) //cya later "parent that the button was inside of"
     }
-  });
-
-  // Call addTask once DOM is loaded (optional placeholder logic)
-  addTask(); // If you want to initialize with a test task or placeholder, you can modify this line
-});
+</script>
